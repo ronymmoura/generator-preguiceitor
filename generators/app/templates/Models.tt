@@ -1,0 +1,82 @@
+/// <reference path="../../_all.d.ts" />
+
+'use strict';
+
+import * as Sequelize from "sequelize";
+import * as fs from 'fs';
+import * as path from 'path';
+import config from '../config';
+
+import { DataDefinitions } from './SequelizeUtil';
+
+export class Models {
+    public sequelize: Sequelize.Connection;
+
+    constructor() {
+        this.initSequelize();
+    }
+
+    initSequelize() {
+        // Instancia o Sequelize com as informações do banco.
+        // A princípio não utilizaremos as timestamps (colunas no banco que registram as alterações no registro).
+        this.sequelize = new Sequelize(
+            config.database.name, 
+            config.database.username, 
+            config.database.password,
+            { 
+                host: config.database.host,
+                dialect: 'mysql',
+                define: {
+                    timestamps: false
+                },
+                logging: config.database.logging
+            });
+
+        <% tables.forEach((table) => {%>
+        // -----------------------------------------------------------------------------------
+        // <%=table.name%>
+        // -----------------------------------------------------------------------------------
+        <%= table.name %> = this.sequelize.define<<%= table.name %>Instance, <%= table.name %>Model>('<%=table.name%>', 
+        { <% table.columns.forEach(function(column) { %>
+            <%= column.name %>: <%= column.seqType %>,<% }); %>
+        }
+        , { tableName: '<%= table.name %>', freezeTableName: true });
+        <% }); %>
+
+        // ===================================================================================
+        // ===================================================================================
+        // Relations
+        // ===================================================================================
+        // ===================================================================================
+        <% tables.forEach((table) => {%><% table.fks.forEach((fk) => {%>
+        <%= table.name %>.belongsTo(<%= fk.table %>, { foreignKey: '<%= fk.column %>', targetKey: 'id' });
+        <%= fk.table %>.hasMany(<%= table.name %>, { foreignKey: '<%= fk.column %>' });
+        <% }); %>
+        <% }); %>
+
+        // Many-to-Many
+        <% belongsToMany.forEach(function(manyItem) { %> 
+        <%= manyItem.table %>.belongsToMany(<%=manyItem.otherTable%>, { through: '<%=manyItem.through%>', foreignKey: '<%=manyItem.foreignKey%>', otherKey: '<%=manyItem.otherKey%>' });<% }); %> 
+    }
+}
+
+<% tables.forEach((table) => {%>
+// -----------------------------------------------------------------------------------
+// <%=table.name%>
+// -----------------------------------------------------------------------------------
+export class <%=table.name%>Model {
+    <% table.columns.forEach(function(column) { %>
+    <%= column.name %>?: <%= column.type %>;<% }); %>
+    
+}
+
+interface <%=table.name%>Instance extends Sequelize.Instance<<%=table.name%>Instance, <%=table.name%>Model>, <%=table.name%>Model {
+    <% belongsToMany.forEach(function(manyItem) { if(manyItem.table == table.name) {%> 
+    add<%=manyItem.otherTable%>:(<%=manyItem.otherTable%>: <%=manyItem.otherTable%>Model) => Sequelize.Promise<<%=table.name%>Instance>;
+    set<%=pluralize(manyItem.otherTable)%>:(<%=manyItem.otherTable%>: <%=manyItem.otherTable%>Model) => Sequelize.Promise<<%=table.name%>Instance>;
+    remove<%=manyItem.otherTable%>:(<%=manyItem.otherTable%>: <%=manyItem.otherTable%>Model) => Sequelize.Promise<<%=table.name%>Instance>;
+    remove<%=pluralize(manyItem.otherTable)%>:(<%=manyItem.otherTable%>: <%=manyItem.otherTable%>Model) => Sequelize.Promise<<%=table.name%>Instance>;
+    <%}});%>
+}
+export let <%=table.name%>: Sequelize.Model<<%=table.name%>Instance, <%=table.name%>Model>;
+<% }); %>

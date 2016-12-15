@@ -1,0 +1,27 @@
+{
+  "name": "generator-preguiceitor",
+  "version": "0.0.1",
+  "description": "Gerador de código para preguiçosos.",
+  "main": "generators/app/index.js",
+  "repository": "https://github.com/ronymmoura/preguiceitor.git",
+  "author": "Rony Moura <ronymmoura@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "scripts": {
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "mysql": "^2.12.0",
+    "pluralize": "^3.1.0",
+    "yeoman-generator": "^0.24.1",
+    "yosay": "^1.2.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-nsp": "^2.4.2",
+    "gulp-plumber": "^1.1.0"
+  }
+}
