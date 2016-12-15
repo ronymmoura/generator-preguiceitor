@@ -92,36 +92,45 @@
     function translateType(type) {
         switch(type) {
             case 'varchar': 
+            case 'text':
                 return 'string';
             case 'date':
+            case 'datetime':
                 return 'Date';
             case 'int':
             case 'numeric':
             case 'bigint':
+            case 'float':
                 return 'number';
             case 'bit':
                 return 'boolean';
             default:
-                return type;
+                throw 'Type not reconized: ' + type;
         }
     }
 
     function translateSeqType(column) {
         switch(column.DATA_TYPE) {
             case 'varchar': 
+            case 'text':
                 return 'Sequelize.STRING';
             case 'date':
+            case 'datetime':
                 return 'Sequelize.STRING';
             case 'bit':
                 return 'Sequelize.BOOLEAN';
             case 'bigint':
                 return 'Sequelize.BIGINT';
+            case 'float':
+                return 'Sequelize.FLOAT';
             case 'numeric':
             case 'int':
-                if(column.COLUMN_NAME == 'ID')
+                if(column.COLUMN_NAME.toLowerCase() == 'id')
                     return 'DataDefinitions.ID_DEFINITION';
                 else
                     return 'Sequelize.INTEGER';
+            default:
+                throw 'Type not reconized: ' + column.DATA_TYPE;
         }
     }
 
