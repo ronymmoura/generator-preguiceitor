@@ -44,6 +44,28 @@
                     }
                 });
             });
+        },
+
+        getTable: function(tableName, callback) {
+            conn.query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + config.database.name + "' AND TABLE_NAME = '" + tableName + "' ORDER BY TABLE_NAME", (err, rows, fields) => {
+                if(err) throw err;
+
+                rows.forEach((table, index) => {
+
+                    var tableObj = {
+                        name: tableName,
+                        columns: [],
+                        fks: []
+                    };
+
+                    if(config.preguiceitor.excluded.indexOf(tableName) == -1) {
+                        getColumns(tableObj, (table) => {
+                            conn.end();
+                            callback(table);
+                        });
+                    }
+                });
+            });
         }
     };
 

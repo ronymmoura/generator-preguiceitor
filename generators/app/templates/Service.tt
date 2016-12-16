@@ -1,0 +1,54 @@
+/// <reference path="../../../_all.d.ts" />
+
+'use strict';
+
+import { <%= table.name %>DAO } from '../dataAccess/<%= table.name %>DAO';
+
+/**
+ * Classe de regra de negócio do model <%= table.name %>.
+ */
+export class <%= table.name %>Service {
+
+    /**
+     * Lista todos os registros.
+     */
+    list() {
+        let <%= table.name %>Dao = new <%= table.name %>DAO();
+        return <%= table.name %>Dao.list();
+    }
+
+    /**
+     * Busca um registro por id.
+     */
+    get(id: number) {
+        let <%= table.name %>Dao = new <%= table.name %>DAO();
+        return <%= table.name %>Dao.get(id);
+    }
+
+    /**
+     * Cria um novo registro.
+     */
+    create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
+        let <%= table.name %>Dao = new <%= table.name %>DAO();
+        return <%= table.name %>Dao.create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %><%=table.columns[i].name%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>);
+    }
+
+    /**
+     * Atualiza um registro.
+     */
+    update(<% for(i = 0, count = table.columns.length; i < count; i++) { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% } %>) {
+        let <%= table.name %>Dao = new <%= table.name %>DAO();
+        return <%= table.name %>Dao.update(<% for(i = 0, count = table.columns.length; i < count; i++) { %><%=table.columns[i].name%><%=(i+1 == table.columns.length ? '' : ', ')%><% } %>);
+    }
+
+    /**
+     * Deleta um registro por id.
+     */
+    delete(id: number) {
+        let <%= table.name %>Dao = new <%= table.name %>DAO();
+        return <%= table.name %>Dao.delete(id);
+    }
+
+    // Insira seus métodos aqui...
+
+}
