@@ -1,0 +1,10 @@
+import { Component } from '@angular/core';
+
+@Component({
+    selector: '<%= name %>-page',
+    templateUrl: './app/pages/<%= name %>/<%= name %>.html',
+    styleUrls: ['./app/pages/<%= name %>/<%= name %>.css']
+})
+export class <%= name %>Page {
+    
+}

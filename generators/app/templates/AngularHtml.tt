@@ -1,0 +1,13 @@
+<div class="panel">
+    <div class="header">
+        Title
+    </div>
+
+    <div class="commands">
+        <button class="button green">Button</button>
+    </div>
+
+    <div class="content">
+        
+    </div>
+</div>

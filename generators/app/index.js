@@ -77,13 +77,26 @@ var PreguiceitorBase = yeoman.Base.extend({
         }
     },
 
-    page: function () {
-        if(this.config.default.projectType != 'mobile' || this.config.default.projectType != 'desktop') {
+    route: function () {
+        if(this.config.default.projectType != 'api') {
             console.error(chalk.red('This project doesn\'t support this operation!'));
             return;
         }
 
-        console.log('Generating page...');
+        this._generateRoute(this.name);
+    },
+
+    page: function () {
+        if(this.config.default.projectType != 'mobile' && this.config.default.projectType != 'desktop') {
+            console.error(chalk.red('This project doesn\'t support this operation!'));
+            return;
+        }
+
+        if(this.config.default.projectType == 'desktop') {
+            console.log('Generating page...');
+
+            this._generateAngularPage(this.name);
+        }
     },
 
     // "Private"" methods
@@ -100,12 +113,44 @@ var PreguiceitorBase = yeoman.Base.extend({
         );
     },
 
+    _generateRoute: function(name) {
+        this.fs.copyTpl(
+            this.templatePath('Route.tt'),
+            this.destinationPath('src/routes/' + name + 'Routes.ts'),
+            {
+                name: name
+            }
+        );
+    },
+
     _generateIonicPage: function () {
         
     },
 
-    _generateAngularPage: function () {
+    _generateAngularPage: function (name) {
+        this.fs.copyTpl(
+            this.templatePath('AngularHtml.tt'),
+            this.destinationPath('src/app/pages/' + name + '/' + name + '.html'),
+            {
+                name: name
+            }
+        );
 
+        this.fs.copyTpl(
+            this.templatePath('AngularComponent.tt'),
+            this.destinationPath('src/app/pages/' + name + '/' + name + '.ts'),
+            {
+                name: name
+            }
+        );
+
+        this.fs.copyTpl(
+            this.templatePath('SCSS.tt'),
+            this.destinationPath('src/app/pages/' + name + '/' + name + '.scss'),
+            {
+                name: name
+            }
+        );
     },
 
     _generateDao: function (table) {
@@ -151,6 +196,9 @@ module.exports = PreguiceitorBase.extend({
                 break;
             case 'service':
                 this.service();
+                break;
+            case 'route':
+                this.route();
                 break;
             case 'page':
                 this.page();

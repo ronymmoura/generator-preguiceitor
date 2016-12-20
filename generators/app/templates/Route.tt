@@ -1,0 +1,23 @@
+/// <reference path="../../_all.d.ts" />
+
+import { Request, Response, Router } from 'express';
+import { ParsedAsJson } from 'body-parser';
+
+import config from '../config';
+import Routes from './';
+import { ApiRoute, HttpMethod } from '../lib/ApiRoute';
+import { <%= name %>Service } from '../data';
+
+export class <%= name %>Routes {
+    
+    @ApiRoute('/<%= name %>', HttpMethod.GET, Routes.PublicRouter)
+    public get(req: Request & ParsedAsJson, res: Response) {
+        res.json({ status: 'OK' });
+    }
+
+    @ApiRoute('/<%= name %>', HttpMethod.POST, Routes.RestrictRouter)
+    public post(req: Request & ParsedAsJson, res: Response) {
+        res.json({ status: 'OK' });
+    }
+
+}
