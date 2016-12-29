@@ -7,9 +7,69 @@ var yeoman      = require('yeoman-generator'),
     path        = require('path'),
     mysql       = require('mysql'),
     fs          = require('fs'),
-    database    = require('./database');
+    database    = require('./database'),
+    Generators  = require('./generators');
 
-var PreguiceitorBase = yeoman.Base.extend({
+var PreguiceitorBase = Generators.extend({
+    init: function () {
+        var questions = [
+            {
+                type    : 'input',
+                name    : 'name',
+                message : 'Your project name',
+                default : this.appname // Default to current folder name
+            },
+            {
+                type    : 'input',
+                name    : 'description',
+                message : 'Your project description'
+            },
+            {
+                type: 'list',
+                name: 'projectType',
+                message: 'Your project type',
+                choices: [
+                    'api',
+                    'mobile',
+                    'desktop'
+                ]
+            },
+            {
+                type: 'input',
+                name: 'port',
+                message: 'Your project port',
+                default: 8080
+            },
+            {
+                type: 'input',
+                name: 'databaseHost',
+                message: 'Your database host'
+            },
+            {
+                type: 'input',
+                name: 'databaseName',
+                message: 'Your database name'
+            },
+            {
+                type: 'input',
+                name: 'databaseUsername',
+                message: 'Your database username'
+            },
+            {
+                type: 'input',
+                name: 'databasePassword',
+                message: 'Your database password'
+            }
+        ];
+
+        this.prompt(questions).then((answers) => {
+            this.projectFiles(answers);
+            this.typings();
+            this.package(answers);
+            this.install();
+        });
+    },
+
     model: function () {
         if(this.config.default.projectType != 'api') {
             console.error(chalk.red('This project doesn\'t support this operation!'));
@@ -21,7 +81,7 @@ var PreguiceitorBase = yeoman.Base.extend({
         database.setConfig(this.config);
 
         database.getTables((tables) => {
-            this._generateModel(tables);
+            this.model(tables);
         });
     },
 
@@ -39,14 +99,14 @@ var PreguiceitorBase = yeoman.Base.extend({
             database.getTables((tables) => {
                 for(var table of tables) {
                     console.log('Generating '+ table.name + 'DAO.ts...');
-                    this._generateDao(table);
+                    this.dao(table);
                 }
             });
         } else {
             console.log('Generating '+ this.name + 'DAO.ts...');
             
             database.getTable(this.name, (table) => {
-                this._generateDao(table);
+                this.dao(table);
             });
         }
     },
@@ -65,14 +125,14 @@ var PreguiceitorBase = yeoman.Base.extend({
             database.getTables((tables) => {
                 for(var table of tables) {
                     console.log('Generating '+ table.name + 'Service.ts...');
-                    this._generateService(table);
+                    this.service(table);
                 }
             });
         } else {
             console.log('Generating '+ this.name + 'Service.ts...');
             
             database.getTable(this.name, (table) => {
-                this._generateService(table);
+                this.service(table);
             });
         }
     },
@@ -83,7 +143,7 @@ var PreguiceitorBase = yeoman.Base.extend({
             return;
         }
 
-        this._generateRoute(this.name);
+        this.route(this.name);
     },
 
     page: function () {
@@ -95,84 +155,10 @@ var PreguiceitorBase = yeoman.Base.extend({
         if(this.config.default.projectType == 'desktop') {
             console.log('Generating page...');
 
-            this._generateAngularPage(this.name);
+            this.angularPage(this.name);
         }
-    },
-
-    // "Private"" methods
-
-    _generateModel: function(tables) {
-        this.fs.copyTpl(
-            this.templatePath('Models.tt'),
-            this.destinationPath('src/Data/Models.ts'),
-            {
-                tables: tables,
-                belongsToMany: this.config.default.preguiceitor.belongsToMany,
-                pluralize: pluralize
-            }
-        );
-    },
-
-    _generateRoute: function(name) {
-        this.fs.copyTpl(
-            this.templatePath('Route.tt'),
-            this.destinationPath('src/routes/' + name + 'Routes.ts'),
-            {
-                name: name
-            }
-        );
-    },
-
-    _generateIonicPage: function () {
-        
-    },
-
-    _generateAngularPage: function (name) {
-        this.fs.copyTpl(
-            this.templatePath('AngularHtml.tt'),
-            this.destinationPath('src/app/pages/' + name + '/' + name + '.html'),
-            {
-                name: name
-            }
-        );
-
-        this.fs.copyTpl(
-            this.templatePath('AngularComponent.tt'),
-            this.destinationPath('src/app/pages/' + name + '/' + name + '.ts'),
-            {
-                name: name
-            }
-        );
-
-        this.fs.copyTpl(
-            this.templatePath('SCSS.tt'),
-            this.destinationPath('src/app/pages/' + name + '/' + name + '.scss'),
-            {
-                name: name
-            }
-        );
-    },
-
-    _generateDao: function (table) {
-        this.fs.copyTpl(
-            this.templatePath('DAO.tt'),
-            this.destinationPath('src/data/dataAccess/' + table.name + 'DAO.ts'), 
-            {
-                table: table
-            }
-        );
-    },
-
-    _generateService: function (table) {
-        this.fs.copyTpl(
-            this.templatePath('Service.tt'),
-            this.destinationPath('src/data/services/' + table.name + 'Service.ts'), 
-            {
-                table: table
-            }
-        );
     }
-})
+});
 
 module.exports = PreguiceitorBase.extend({
     constructor: function() {
@@ -180,14 +166,18 @@ module.exports = PreguiceitorBase.extend({
 
         this.argument('type', { type: String, required: true });
 
-        if(this.type != 'model')
+        if(this.type != 'init' && this.type != 'model')
             this.argument('name', { type: String, required: true });
     },
 
     writing: function() {
-        this.config = require(this.destinationPath('build/Config'));
+        if(this.type != 'init')
+            this.config = require(this.destinationPath('build/Config'));
 
         switch(this.type) {
+            case 'init':
+                this.init();
+                break;
             case 'model':
                 this.model();
                 break;

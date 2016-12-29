@@ -1,0 +1,21 @@
+export default {
+    port: <%=params.port%>,
+
+    projectType: '<%=params.projectType%>', // api, mobile, desktop
+
+    database: {
+        host: '<%=params.databaseHost%>',
+        name: '<%=params.databaseName%>',
+        username: '<%=params.databaseUsername%>',
+        password: '<%=params.databasePassword%>',
+        logging: false
+    },
+
+    preguiceitor: {
+        excluded: [],
+        belongsToMany: []
+    },
+    
+    // TODO: Trocar pra .cert em arquivo
+    secret: 'testlab_secretquetodomundosabe'
+}

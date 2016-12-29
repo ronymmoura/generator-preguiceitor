@@ -1,0 +1,112 @@
+/// <reference path="../_all.d.ts" />
+
+'use strict';
+
+import * as express from "express";
+import { json, urlencoded } from "body-parser";
+import * as cors from 'cors';
+import * as jwt from 'jsonwebtoken';
+import { join } from "path";
+
+import config from './config';
+import Routes from './routes';
+import { Models } from './data/Models';
+
+/**
+ * Server for the application that implements the API routes.
+ */
+class Server {
+    public app: express.Application;
+    public db: Models;
+
+    /**
+     * Server for the application that implements the API routes.
+     */
+    constructor() {
+        
+        this.app = express();
+
+        this.config();
+        this.database();
+        this.routes();
+    }
+
+    /**
+     * Configure the server.
+     */
+    private config() {
+        // configure json form parser
+        this.app.use(json());
+
+        // configure cors
+        this.app.use(cors());
+
+        // configure query string parser
+        this.app.use(urlencoded({ extended: true }));
+    }
+
+    /**
+     * Configure the database access.
+     */
+    private database() {
+        this.db = new Models();
+    }
+
+    /**
+     * Configure the routes.
+     */
+    private routes() {
+        // create routes
+        var routes = new Routes();
+
+        this.app.use('/api', Routes.PublicRouter);
+
+        this.tokenVerification();
+
+        this.app.use('/api', Routes.RestrictRouter);
+
+        // add static paths
+        this.app.use(express.static(__dirname));
+
+        // handle 404
+        this.app.use(function (req: express.Request, res: express.Response, next: express.NextFunction) {
+            res.sendStatus(404);
+        });
+    }
+    
+    /**
+     * Validate the jwt for the requests from this point.
+     * The jwt must be passed in the header of the request using the format "bearer [your_token]".
+     */
+    private tokenVerification() {
+        // register the middleware
+        this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+            // get the token from header 
+            let bearerHeader = req.headers['authorization'] as String;
+            
+            // if the token exists, verify it. If don't, send an unauthorized (401) error.
+            if(bearerHeader) {
+
+                // removes the "bearer" prepend
+                let bearer = bearerHeader.split(" ");
+                let bearerToken = bearer[1];
+                
+                // 
+                jwt.verify(bearerToken, config.secret, function (err: any, decoded: any) {
+                    if(err) res.sendStatus(401);
+                    else {
+                        //req.user = decoded;
+                        next();
+                    }
+                });
+                
+            } else {
+                res.sendStatus(401);
+            }
+        });
+    }
+}
+
+var server = new Server();
+module.exports = server.app;

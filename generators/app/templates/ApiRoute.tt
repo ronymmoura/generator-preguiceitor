@@ -1,0 +1,33 @@
+import * as express from 'express';
+import Routes from '../routes';
+
+export function ApiRoute(path: string, method: HttpMethod, router: express.Router) {
+
+    return function(target, key, descriptor) {
+
+        switch(method) {
+            case HttpMethod.GET:
+                router.get(path, descriptor.value);
+                break;
+            case HttpMethod.POST:
+                router.post(path, descriptor.value);
+                break;
+            case HttpMethod.PUT:
+                router.put(path, descriptor.value);
+                break;
+            case HttpMethod.DELETE:
+                router.delete(path, descriptor.value);
+                break; 
+        }
+
+        return descriptor;
+    }
+
+}
+
+export enum HttpMethod {
+    GET,
+    POST,
+    PUT,
+    DELETE
+}

@@ -1,0 +1,15 @@
+/// <reference path="../../_all.d.ts" />
+
+'use strict';
+
+import * as Sequelize from 'sequelize';
+
+export class DataDefinitions {
+    static ID_DEFINITION = {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+        unique: true
+    }
+}

@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import config from '../config';
 
-import { DataDefinitions } from './SequelizeUtil';
+import { DataDefinitions } from '../lib/SequelizeUtil';
 
 export class Models {
     public sequelize: Sequelize.Connection;
