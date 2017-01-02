@@ -125,6 +125,7 @@
             case 'float':
                 return 'number';
             case 'bit':
+            case 'tinyint':
                 return 'boolean';
             default:
                 throw 'Type not reconized: ' + type;
@@ -140,6 +141,7 @@
             case 'datetime':
                 return 'Sequelize.STRING';
             case 'bit':
+            case 'tinyint':
                 return 'Sequelize.BOOLEAN';
             case 'bigint':
                 return 'Sequelize.BIGINT';

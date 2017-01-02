@@ -1,0 +1,21 @@
+/// <reference path="../../_all.d.ts" />
+
+import * as express from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export default class Routes {
+
+    public static PublicRouter: express.Router = express.Router();
+    public static RestrictRouter: express.Router = express.Router();
+    
+    constructor() {
+        fs.readdirSync(__dirname).filter((file: string) => {
+            return (file !== path.basename(module.filename)) && (file.indexOf('.map') === -1);
+        }).forEach((file: string) => {
+            let route = require(path.join(__dirname, file));
+        });
+
+    }
+
+}

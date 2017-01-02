@@ -2,15 +2,16 @@
     'use strict';
 
     var yeoman  = require('yeoman-generator'),
+        pluralize   = require('pluralize'),
         mysql   = require('mysql'),
         config  = {},
 	    tables	= [],
         conn;
 
     module.exports = yeoman.Base.extend({
-        model: function(tables) {
+        apiModel: function(tables) {
             this.fs.copyTpl(
-                this.templatePath('Models.tt'),
+                this.templatePath('api/Models.tt'),
                 this.destinationPath('src/Data/Models.ts'),
                 {
                     tables: tables,
@@ -20,9 +21,9 @@
             );
         },
 
-        route: function(name) {
+        apiRoute: function(name) {
             this.fs.copyTpl(
-                this.templatePath('Route.tt'),
+                this.templatePath('api/Route.tt'),
                 this.destinationPath('src/routes/' + name + 'Routes.ts'),
                 {
                     name: name
@@ -36,7 +37,7 @@
 
         angularPage: function (name) {
             this.fs.copyTpl(
-                this.templatePath('AngularHtml.tt'),
+                this.templatePath('angular/AngularHtml.tt'),
                 this.destinationPath('src/app/pages/' + name + '/' + name + '.html'),
                 {
                     name: name
@@ -44,7 +45,7 @@
             );
 
             this.fs.copyTpl(
-                this.templatePath('AngularComponent.tt'),
+                this.templatePath('angular/AngularComponent.tt'),
                 this.destinationPath('src/app/pages/' + name + '/' + name + '.ts'),
                 {
                     name: name
@@ -52,7 +53,7 @@
             );
 
             this.fs.copyTpl(
-                this.templatePath('SCSS.tt'),
+                this.templatePath('angular/SCSS.tt'),
                 this.destinationPath('src/app/pages/' + name + '/' + name + '.scss'),
                 {
                     name: name
@@ -60,9 +61,9 @@
             );
         },
 
-        dao: function (table) {
+        apiDao: function (table) {
             this.fs.copyTpl(
-                this.templatePath('DAO.tt'),
+                this.templatePath('api/DAO.tt'),
                 this.destinationPath('src/data/dataAccess/' + table.name + 'DAO.ts'), 
                 {
                     table: table
@@ -70,9 +71,9 @@
             );
         },
 
-        service: function (table) {
+        apiService: function (table) {
             this.fs.copyTpl(
-                this.templatePath('Service.tt'),
+                this.templatePath('api/Service.tt'),
                 this.destinationPath('src/data/services/' + table.name + 'Service.ts'), 
                 {
                     table: table
@@ -80,82 +81,123 @@
             );
         },
 
-        projectFiles: function (answers) {
+        projectFilesApi: function (answers) {
+            // Main api files
             this.fs.copyTpl(
-                this.templatePath('Config.tt'),
+                this.templatePath('api/Server.tt'),
+                this.destinationPath('src/Server.ts'),
+                {}
+            );
+            this.fs.copyTpl(
+                this.templatePath('api/www.tt'),
+                this.destinationPath('www.js'),
+                {}
+            );
+            
+
+            // Config files
+            this.fs.copyTpl(
+                this.templatePath('api/Config.tt'),
                 this.destinationPath('src/Config.ts'),
                 {
                     params: answers
                 }
             );
 
+            // lib folder
             this.fs.copyTpl(
-                this.templatePath('Server.tt'),
-                this.destinationPath('src/Server.ts'),
-                {}
-            );
-
-            this.fs.copyTpl(
-                this.templatePath('SequelizeUtils.tt'),
+                this.templatePath('api/SequelizeUtils.tt'),
                 this.destinationPath('src/lib/SequelizeUtils.ts'),
                 {}
             );
 
             this.fs.copyTpl(
-                this.templatePath('ApiRoute.tt'),
+                this.templatePath('api/ApiRoute.tt'),
                 this.destinationPath('src/lib/ApiRoute.ts'),
                 {}
             );
+
+            this.fs.copyTpl(
+                this.templatePath('api/indexRoutes.tt'),
+                this.destinationPath('src/routes/index.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('api/indexData.tt'),
+                this.destinationPath('src/data/index.ts'),
+                {}
+            );
+
+            // package.json
+            this.fs.copyTpl(
+                this.templatePath('api/package.tt'),
+                this.destinationPath('package.json'),
+                {
+                    params: answers
+                }
+            );
+
+            // typings.json
+            this.fs.copyTpl(
+                this.templatePath('api/typings.tt'),
+                this.destinationPath('typings.json'),
+                {}
+            );
+
+            // Other files
+            this.fs.copyTpl(
+                this.templatePath('api/gulpfile.tt'),
+                this.destinationPath('gulpfile.js'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('api/gulpfile.tt'),
+                this.destinationPath('gulpfile.js'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('api/tsconfig.tt'),
+                this.destinationPath('tsconfig.json'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('api/_all.d.tt'),
+                this.destinationPath('_all.d.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('api/sha256.tt'),
+                this.destinationPath('typings/custom/sha256/index.d.ts'),
+                {}
+            );
+                
+            this.install();
         },
 
-        typings: function () {
-            var tps = {
-                "globalDependencies": {
-                    "node": "registry:dt/node#6.0.0+20161014191813"
-                },
-                "dependencies": {
-                    "body-parser": "registry:npm/body-parser#1.15.2+20160815132839",
-                    "cors": "registry:npm/cors#2.7.0+20160902012746",
-                    "express": "registry:npm/express#4.14.0+20160925001530",
-                    "jsonwebtoken": "registry:npm/jsonwebtoken#7.1.8+20160811031426",
-                    "lodash": "registry:npm/lodash#4.0.0+20161015015725",
-                    "sequelize": "registry:npm/sequelize#3.0.0+20161019115811"
+        projectFilesWeb: function (answers) {
+            // package.json
+            this.fs.copyTpl(
+                this.templatePath('web/package.tt'),
+                this.destinationPath('src/Config.ts'),
+                {
+                    params: answers
                 }
-            }
-            this.write('typings.json', JSON.stringify(tps, null, 4));
+            );
+                
+            this.install();
         },
 
-        package: function (answers) {
-            var pkg = {
-                "name": answers.name,
-                "description": answers.description,
-                "version": "0.0.1",
-                "main": "www.js",
-                "scripts": {
-                    "start": "gulp && node .",
-                    "postinstall": "typings install",
-                    "watch": "concurrently --kill-others \"gulp watch\" \"yarn start\" --max_old_space_size=2048"
-                },
-                "devDependencies": {
-                    "gulp": "^3.9.1",
-                    "gulp-sourcemaps": "^1.9.1",
-                    "gulp-typescript": "^3.0.2",
-                    "typescript": "^2.0.3",
-                    "typings": "^1.4.0"
-                },
-                "dependencies": {
-                    "body-parser": "^1.15.2",
-                    "cors": "^2.8.1",
-                    "debug": "^2.2.0",
-                    "express": "^4.14.0",
-                    "jsonwebtoken": "^7.2.0",
-                    "lodash": "^4.16.4",
-                    "mysql": "^2.12.0",
-                    "sequelize": "^3.27.0",
-                    "sha256": "^0.2.0"
-                }
-            };
-            this.write('package.json', JSON.stringify(pkg, null, 4));
+        projectFilesDesktop: function (answers) {
+            
+        },
+
+        projectFilesMobile: function (answers) {
+            
         },
 
         install: function() {

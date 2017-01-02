@@ -1,0 +1,29 @@
+{
+    "name": "<%=params.name%>",
+    "description": "<%=params.description%>",
+    "version": "0.0.1",
+    "main": "www.js",
+    "scripts": {
+        "start": "gulp && node .",
+        "postinstall": "typings install",
+        "watch": "concurrently --kill-others \"gulp watch\" \"yarn start\" --max_old_space_size=2048"
+    },
+    "devDependencies": {
+        "gulp": "^3.9.1",
+        "gulp-sourcemaps": "^1.9.1",
+        "gulp-typescript": "^3.0.2",
+        "typescript": "^2.0.3",
+        "typings": "^1.4.0"
+    },
+    "dependencies": {
+        "body-parser": "^1.15.2",
+        "cors": "^2.8.1",
+        "debug": "^2.2.0",
+        "express": "^4.14.0",
+        "jsonwebtoken": "^7.2.0",
+        "lodash": "^4.16.4",
+        "mysql": "^2.12.0",
+        "sequelize": "^3.27.0",
+        "sha256": "^0.2.0"
+    }
+}

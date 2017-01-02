@@ -1,0 +1,27 @@
+var gulp            = require("gulp"),
+    ts              = require("gulp-typescript"),
+    sourcemaps      = require('gulp-sourcemaps');
+
+var paths = {
+    ts: ["src/**/*.ts"]
+}
+
+var tsProject = ts.createProject('tsconfig.json');
+
+gulp.task("ts", () => {
+    gulp.src(paths.ts)
+        .pipe(sourcemaps.init())
+        .pipe(tsProject())
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest("build/"));
+});
+
+gulp.task('build', ['ts']);
+
+gulp.task("watch-files", () => {
+    gulp.watch([paths.ts], ['ts']);
+});
+
+gulp.task("default", ["build"]);
+gulp.task("only-watch", ['watch-files']);
+gulp.task("watch", ["build", "watch-files"]);

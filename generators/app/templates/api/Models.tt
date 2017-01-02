@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import config from '../config';
 
-import { DataDefinitions } from '../lib/SequelizeUtil';
+import { DataDefinitions } from '../lib/SequelizeUtils';
 
 export class Models {
     public sequelize: Sequelize.Connection;
@@ -49,7 +49,7 @@ export class Models {
         // ===================================================================================
         // ===================================================================================
         <% tables.forEach((table) => {%><% table.fks.forEach((fk) => {%>
-        <%= table.name %>.belongsTo(<%= fk.table %>, { foreignKey: '<%= fk.column %>', targetKey: 'id' });
+        <%= table.name %>.belongsTo(<%= fk.table %>, { foreignKey: '<%= fk.column %>', targetKey: 'ID' });
         <%= fk.table %>.hasMany(<%= table.name %>, { foreignKey: '<%= fk.column %>' });
         <% }); %>
         <% }); %>

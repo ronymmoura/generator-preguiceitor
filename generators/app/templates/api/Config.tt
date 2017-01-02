@@ -1,7 +1,7 @@
 export default {
     port: <%=params.port%>,
 
-    projectType: '<%=params.projectType%>', // api, mobile, desktop
+    projectType: '<%=params.projectType%>', // web, api, mobile, desktop
 
     database: {
         host: '<%=params.databaseHost%>',
@@ -17,5 +17,5 @@ export default {
     },
     
     // TODO: Trocar pra .cert em arquivo
-    secret: 'testlab_secretquetodomundosabe'
+    secret: '<%=params.name%>_secretquetodomundosabe'
 }

@@ -1,7 +1,6 @@
 'use strict';
 
 var yeoman      = require('yeoman-generator'),
-    pluralize   = require('pluralize'),
     chalk       = require('chalk'),
     yosay       = require('yosay'),
     path        = require('path'),
@@ -17,7 +16,7 @@ var PreguiceitorBase = Generators.extend({
                 type    : 'input',
                 name    : 'name',
                 message : 'Your project name',
-                default : this.appname // Default to current folder name
+                default : process.cwd().split(path.sep).pop() // Default to current folder name
             },
             {
                 type    : 'input',
@@ -29,44 +28,84 @@ var PreguiceitorBase = Generators.extend({
                 name: 'projectType',
                 message: 'Your project type',
                 choices: [
+                    'web',
                     'api',
                     'mobile',
                     'desktop'
                 ]
-            },
-            {
-                type: 'input',
-                name: 'port',
-                message: 'Your project port',
-                default: 8080
-            },
-            {
-                type: 'input',
-                name: 'databaseHost',
-                message: 'Your database host'
-            },
-            {
-                type: 'input',
-                name: 'databaseName',
-                message: 'Your database name'
-            },
-            {
-                type: 'input',
-                name: 'databaseUsername',
-                message: 'Your database username'
-            },
-            {
-                type: 'input',
-                name: 'databasePassword',
-                message: 'Your database password'
             }
         ];
 
         this.prompt(questions).then((answers) => {
-            this.projectFiles(answers);
-            this.typings();
-            this.package(answers);
-            this.install();
+            // Only api and web project types have the options port and database info.
+            // The mobile and desktop types can't access the database directly, and
+            // they can't start a server by themselves. That's why they don't have a port.
+            if(answers.projectType == 'api' || answers.projectType == 'web') {
+                var questions2 = [
+                    {
+                        type: 'input',
+                        name: 'port',
+                        message: 'Your project port',
+                        default: 8080
+                    }
+                ];
+
+                this.prompt(questions2).then((answers2) => {
+                    // Join the answers
+                    for(var i in answers2) {
+                        answers[i] = answers2[i];
+                    }
+
+                    if(answers.projectType == 'api') {
+                        var questions3 = [
+                            {
+                                type: 'input',
+                                name: 'databaseHost',
+                                message: 'Your database host'
+                            },
+                            {
+                                type: 'input',
+                                name: 'databaseName',
+                                message: 'Your database name'
+                            },
+                            {
+                                type: 'input',
+                                name: 'databaseUsername',
+                                message: 'Your database username'
+                            },
+                            {
+                                type: 'input',
+                                name: 'databasePassword',
+                                message: 'Your database password'
+                            }
+                        ];
+
+                        this.prompt(questions3).then((answers3) => {
+                            // Join the answers
+                            for(var i in answers3) {
+                                answers[i] = answers3[i];
+                            }
+
+                            this.projectFilesApi(answers);
+                        });
+                    }
+                    // If project type is different from api (web in this case)
+                    else {
+                        this.projectFilesWeb(answers);
+                    }
+                });
+            }
+            // If project type is different from api and web
+            else {
+                switch(answers.projectType) {
+                    case 'desktop':
+                        this.projectFilesDesktop(answers);
+                        break;
+                    case 'mobile':
+                        this.projectFilesMobile(answers);
+                        break;
+                }
+            }
         });
     },
 
@@ -81,7 +120,7 @@ var PreguiceitorBase = Generators.extend({
         database.setConfig(this.config);
 
         database.getTables((tables) => {
-            this.model(tables);
+            this.apiModel(tables);
         });
     },
 
@@ -99,14 +138,14 @@ var PreguiceitorBase = Generators.extend({
             database.getTables((tables) => {
                 for(var table of tables) {
                     console.log('Generating '+ table.name + 'DAO.ts...');
-                    this.dao(table);
+                    this.apiDao(table);
                 }
             });
         } else {
             console.log('Generating '+ this.name + 'DAO.ts...');
             
             database.getTable(this.name, (table) => {
-                this.dao(table);
+                this.apiDao(table);
             });
         }
     },
@@ -125,14 +164,14 @@ var PreguiceitorBase = Generators.extend({
             database.getTables((tables) => {
                 for(var table of tables) {
                     console.log('Generating '+ table.name + 'Service.ts...');
-                    this.service(table);
+                    this.apiService(table);
                 }
             });
         } else {
             console.log('Generating '+ this.name + 'Service.ts...');
             
             database.getTable(this.name, (table) => {
-                this.service(table);
+                this.apiService(table);
             });
         }
     },
@@ -143,7 +182,7 @@ var PreguiceitorBase = Generators.extend({
             return;
         }
 
-        this.route(this.name);
+        this.apiRoute(this.name);
     },
 
     page: function () {
