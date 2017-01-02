@@ -1,0 +1,27 @@
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { Routes, RouterModule } from '@angular/router';
+
+import { HomeComponent } from '../home';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+  }
+];
+
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    RouterModule.forRoot( routes, { useHash: true } ),
+  ],
+  providers: [ ],
+  declarations: [ HomeComponent ],
+  exports: [
+    RouterModule
+  ],
+})
+
+export class AppRoutingModule {}

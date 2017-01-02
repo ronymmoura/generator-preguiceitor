@@ -39,9 +39,9 @@ export class <%= table.name %>DAO {
      */
     update(<% for(i = 0, count = table.columns.length; i < count; i++) { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% } %>) {
         var promise = new Promise((resolve, reject) => {
-            models.<%= table.name %>.findById(id).then(
+            models.<%= table.name %>.findById(ID).then(
                 (item) => {
-                    item.update({<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %>
+                    item.update({<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %>
                         <%= table.columns[i].name %>: <%= table.columns[i].name %>,<% } %><% } %>
                     }).then(resolve, reject);
                 }, reject);

@@ -9,18 +9,6 @@
         conn;
 
     module.exports = yeoman.Base.extend({
-        apiModel: function(tables) {
-            this.fs.copyTpl(
-                this.templatePath('api/Models.tt'),
-                this.destinationPath('src/Data/Models.ts'),
-                {
-                    tables: tables,
-                    belongsToMany: this.config.default.preguiceitor.belongsToMany,
-                    pluralize: pluralize
-                }
-            );
-        },
-
         apiRoute: function(name) {
             this.fs.copyTpl(
                 this.templatePath('api/Route.tt'),
@@ -57,6 +45,18 @@
                 this.destinationPath('src/app/pages/' + name + '/' + name + '.scss'),
                 {
                     name: name
+                }
+            );
+        },
+
+        apiModel: function(tables) {
+            this.fs.copyTpl(
+                this.templatePath('api/Models.tt'),
+                this.destinationPath('src/Data/Models.ts'),
+                {
+                    tables: tables,
+                    belongsToMany: this.config.default.preguiceitor.belongsToMany,
+                    pluralize: pluralize
                 }
             );
         },
@@ -180,12 +180,121 @@
         },
 
         projectFilesWeb: function (answers) {
+            // Main webapp files
+            this.fs.copyTpl(
+                this.templatePath('web/main.tt'),
+                this.destinationPath('src/main.ts'),
+                {}
+            );
+            this.fs.copyTpl(
+                this.templatePath('web/index.tt'),
+                this.destinationPath('src/index.html'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/theme.tt'),
+                this.destinationPath('src/theme/styles.scss'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/app.component.tt'),
+                this.destinationPath('src/pages/app/app.component.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/app.module.tt'),
+                this.destinationPath('src/pages/app/app.module.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/app.routing.tt'),
+                this.destinationPath('src/pages/app/app.routing.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/app-html.tt'),
+                this.destinationPath('src/pages/app/app.html'),
+                {}
+            );
+
+            // HomeComponent
+
+            this.fs.copyTpl(
+                this.templatePath('web/home.component.tt'),
+                this.destinationPath('src/pages/home/index.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/home-html.tt'),
+                this.destinationPath('src/pages/home/home.html'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/home-scss.tt'),
+                this.destinationPath('src/pages/home/home.scss'),
+                {}
+            );
+
+
             // package.json
             this.fs.copyTpl(
                 this.templatePath('web/package.tt'),
-                this.destinationPath('src/Config.ts'),
+                this.destinationPath('package.json'),
                 {
                     params: answers
+                }
+            );
+
+            // Other files
+            this.fs.copyTpl(
+                this.templatePath('web/tsconfig.tt'),
+                this.destinationPath('tsconfig.json'),
+                {}
+            );
+            this.fs.copyTpl(
+                this.templatePath('web/angular-cli.tt'),
+                this.destinationPath('angular-cli.json'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/tslint.tt'),
+                this.destinationPath('tslint.json'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/polyfills.tt'),
+                this.destinationPath('src/polyfills.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/favicon.ico'),
+                this.destinationPath('src/favicon.ico'),
+                {}
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/environment.tt'),
+                this.destinationPath('src/environments/environment.prod.ts'),
+                {
+                    isProd: true
+                }
+            );
+
+            this.fs.copyTpl(
+                this.templatePath('web/environment.tt'),
+                this.destinationPath('src/environments/environment.ts'),
+                {
+                    isProd: false
                 }
             );
                 

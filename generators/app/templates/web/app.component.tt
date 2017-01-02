@@ -1,0 +1,14 @@
+import { Component } from '@angular/core';
+import 'rxjs/add/operator/toPromise';
+
+@Component({
+    selector: 'app',
+    template: `<router-outlet></router-outlet>`
+})
+export class AppComponent {
+
+    constructor() {
+
+    }
+
+}
