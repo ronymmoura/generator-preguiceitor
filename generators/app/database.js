@@ -23,25 +23,24 @@
             conn.query("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '" + config.database.name + "' ORDER BY TABLE_NAME", (err, rows, fields) => {
                 if(err) throw err;
 
-                rows.forEach((table, index) => {
-		            let isLastTable = ((index+1) == rows.length);
+                rows.forEach((row, index) => {
 
+                    let isLastTable = ((index+1) == rows.length);
                     var tableObj = {
-                        name: table.TABLE_NAME,
+                        name: row.TABLE_NAME,
                         columns: [],
                         fks: []
                     };
-
-                    if(config.preguiceitor.excluded.indexOf(table.TABLE_NAME) == -1) {
-                        getColumns(tableObj, (table) => {
+                        
+                    getColumns(tableObj, (table) => {
+                        if(config.preguiceitor.excluded.indexOf(row.TABLE_NAME) == -1)
                             tables.push(table);
-                            
-                            if(isLastTable) {
-                                conn.end();
-                                callback(tables);
-                            }
-                        });
-                    }
+                        
+                        if(isLastTable) {
+                            conn.end();
+                            callback(tables);
+                        }
+                    });
                 });
             });
         },
