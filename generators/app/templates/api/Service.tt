@@ -2,12 +2,13 @@
 
 'use strict';
 
+import { BaseService } from '../../lib/BaseService';
 import { <%= table.name %>DAO } from '../dataAccess/<%= table.name %>DAO';
 
 /**
  * Classe de regra de negócio do model <%= table.name %>.
  */
-export class <%= table.name %>Service {
+export class <%= table.name %>Service extends BaseService {
 
     /**
      * Lista todos os registros.
@@ -18,19 +19,19 @@ export class <%= table.name %>Service {
     }
 
     /**
-     * Busca um registro por id.
+     * Busca um registro por ID.
      */
-    get(id: number) {
+    get(ID: number) {
         let <%= table.name %>Dao = new <%= table.name %>DAO();
-        return <%= table.name %>Dao.get(id);
+        return <%= table.name %>Dao.get(ID);
     }
 
     /**
      * Cria um novo registro.
      */
-    create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
+    create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
         let <%= table.name %>Dao = new <%= table.name %>DAO();
-        return <%= table.name %>Dao.create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %><%=table.columns[i].name%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>);
+        return <%= table.name %>Dao.create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %><%=table.columns[i].name%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>);
     }
 
     /**
@@ -42,11 +43,11 @@ export class <%= table.name %>Service {
     }
 
     /**
-     * Deleta um registro por id.
+     * Deleta um registro por ID.
      */
-    delete(id: number) {
+    delete(ID: number) {
         let <%= table.name %>Dao = new <%= table.name %>DAO();
-        return <%= table.name %>Dao.delete(id);
+        return <%= table.name %>Dao.delete(ID);
     }
 
     // Insira seus métodos aqui...

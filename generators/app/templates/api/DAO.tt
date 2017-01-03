@@ -17,18 +17,18 @@ export class <%= table.name %>DAO {
     }
 
     /**
-     * Busca um registro por id.
+     * Busca um registro por ID.
      */
-    get(id: number) {
-        return models.<%= table.name %>.findById(id);
+    get(ID: number) {
+        return models.<%= table.name %>.findById(ID);
     }
 
     /**
      *  Cria um novo registro.
      */
-    create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
+    create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
         let new<%= table.name %> = new models.<%= table.name %>Model();
-        <% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'id') { %>
+        <% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %>
         new<%= table.name %>.<%= table.columns[i].name %> = <%= table.columns[i].name %>;<% } %><% } %>
 
         return models.<%= table.name %>.create(new<%= table.name %>);
@@ -51,10 +51,10 @@ export class <%= table.name %>DAO {
     }
 
     /**
-     * Deleta um registro por id.
+     * Deleta um registro por ID.
      */
-    delete(id: number) {
-        return models.<%= table.name %>.destroy({ where: { id: id } });
+    delete(ID: number) {
+        return models.<%= table.name %>.destroy({ where: { ID: ID } });
     }
 
     // Insira seus métodos aqui...

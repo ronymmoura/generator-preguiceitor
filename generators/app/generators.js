@@ -118,6 +118,12 @@
             );
 
             this.fs.copyTpl(
+                this.templatePath('api/BaseService.tt'),
+                this.destinationPath('src/lib/BaseService.ts'),
+                {}
+            );
+
+            this.fs.copyTpl(
                 this.templatePath('api/indexRoutes.tt'),
                 this.destinationPath('src/routes/index.ts'),
                 {}

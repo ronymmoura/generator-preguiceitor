@@ -1,0 +1,20 @@
+/// <reference path="../../_all.d.ts" />
+
+'use strict';
+
+export class BaseService {
+    validateRequired(fields: any) {
+        const promise = new Promise((resolve, reject) => {
+            for(let i in fields) {
+                if(typeof(fields[i]) === 'undefined' || fields[i] === '') {
+                    reject({ status: 'error', message: `The field "${i}" is required.` });
+                    break;
+                }
+            }
+
+            resolve();
+        });
+
+        return promise;
+    }
+}
