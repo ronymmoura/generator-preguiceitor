@@ -77,7 +77,9 @@
                 table.columns.push({
                     name: column.COLUMN_NAME,
                     type: translateType(column.DATA_TYPE),
-                    seqType: translateSeqType(column)
+                    seqType: translateSeqType(column),
+                    isNullable: column.IS_NULLABLE === 'YES',
+                    defaultValue: column.COLUMN_DEFAULT
                 });
             }
 

@@ -29,7 +29,7 @@ export class <%= table.name %>DAO {
     create(<% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %><%=table.columns[i].name%>: <%=table.columns[i].type%><%=(i+1 == table.columns.length ? '' : ', ')%><% }} %>) {
         let new<%= table.name %> = new models.<%= table.name %>Model();
         <% for(i = 0, count = table.columns.length; i < count; i++) { %><% if(table.columns[i].name != 'ID') { %>
-        new<%= table.name %>.<%= table.columns[i].name %> = <%= table.columns[i].name %>;<% } %><% } %>
+        <% if (table.columns[i].isNullable || (!table.columns[i].isNullable && table.columns[i].defaultValue !== null)) { %>if(<%=table.columns[i].name%>) <% } %>new<%= table.name %>.<%= table.columns[i].name %> = <%= table.columns[i].name %>;<% } %><% } %>
 
         return models.<%= table.name %>.create(new<%= table.name %>);
     }
