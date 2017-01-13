@@ -1,13 +1,6 @@
 {
-    "globalDependencies": {
-        "node": "registry:dt/node#6.0.0+20161014191813"
-    },
-    "dependencies": {
-        "body-parser": "registry:npm/body-parser#1.15.2+20160815132839",
-        "cors": "registry:npm/cors#2.7.0+20160902012746",
-        "express": "registry:npm/express#4.14.0+20160925001530",
-        "jsonwebtoken": "registry:npm/jsonwebtoken#7.1.8+20160811031426",
-        "lodash": "registry:npm/lodash#4.0.0+20161015015725",
-        "sequelize": "registry:npm/sequelize#3.0.0+20161019115811"
-    }
+  "dependencies": {
+    "body-parser": "registry:npm/body-parser#1.15.2+20161116154925",
+    "sequelize": "registry:npm/sequelize#4.0.0-1+20161101121248"
+  }
 }

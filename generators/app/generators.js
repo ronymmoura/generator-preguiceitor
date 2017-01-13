@@ -169,18 +169,6 @@
                 this.destinationPath('tsconfig.json'),
                 {}
             );
-
-            this.fs.copyTpl(
-                this.templatePath('api/_all.d.tt'),
-                this.destinationPath('_all.d.ts'),
-                {}
-            );
-
-            this.fs.copyTpl(
-                this.templatePath('api/sha256.tt'),
-                this.destinationPath('typings/custom/sha256/index.d.ts'),
-                {}
-            );
                 
             this.install();
         },

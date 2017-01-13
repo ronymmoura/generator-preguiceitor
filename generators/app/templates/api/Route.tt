@@ -1,4 +1,4 @@
-/// <reference path="../../_all.d.ts" />
+'use strict';
 
 import { Request, Response, Router } from 'express';
 import { ParsedAsJson } from 'body-parser';
