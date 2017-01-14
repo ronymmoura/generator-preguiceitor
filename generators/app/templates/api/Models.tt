@@ -47,7 +47,7 @@ export class Models {
         // ===================================================================================
         // ===================================================================================
         <% tables.forEach((table) => {%><% table.fks.forEach((fk) => {%>
-        <%= table.name %>.belongsTo(<%= fk.table %>, { foreignKey: '<%= fk.column %>', targetKey: 'ID' });
+        <%= table.name %>.belongsTo(<%= fk.table %>, { foreignKey: '<%= fk.column %>', targetKey: 'id' });
         <%= fk.table %>.hasMany(<%= table.name %>, { foreignKey: '<%= fk.column %>' });
         <% }); %>
         <% }); %>
